@@ -1,6 +1,6 @@
 #ifndef lint
 static char *copyright =
-	"LC - Copyright University of Waterloo, 1978,1985,1987";
+	"LC - Copyright University of Waterloo, 1978,1985,1987,2006";
 #endif /* lint */
 /*
  * lc [directory ...]
@@ -9,6 +9,8 @@ static char *copyright =
 #include <sys/types.h>
 #include <sys/param.h>
 #include <sys/stat.h>
+#include <termios.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -44,15 +46,15 @@ static struct filelist {
 	clist = {(char **) NULL, 0, 0, 0, "Char. Spec. Files"},
 	mpclist = {(char **) NULL, 0, 0, 0, "MPX Char. Files"},
 	mpblist = {(char **) NULL, 0, 0, 0, "MPX Block Files"},
-	symlist = {(char **) NULL, 0, 0, 0, "Unsatisfied Symbolic Links"},
 	soclist = {(char **) NULL, 0, 0, 0, "Sockets"},
 	doorlist = {(char **) NULL, 0, 0, 0, "Doors"},
-				/* flag is always on for this list */
+	symlist = {(char **) NULL, 0, 0, 0, "Unsatisfied Symbolic Links"},
+	/* flag is always on for the gok list, the last in this table. */
 	goklist = {(char **) NULL, 0, 0, 1, "**GOK"};
 
 static struct filelist *printlist[] = {
-	&dlist, &flist, &plist, &blist, &clist, &mpclist, &mpblist, &symlist,
-	&soclist, &doorlist, &goklist, 0
+	&dlist, &flist, &plist, &blist, &clist, &mpclist, &mpblist,
+	&soclist, &doorlist, &symlist, &goklist, 0
 };
 
 static struct filelist *listtype[IFMT+1];
@@ -193,11 +195,14 @@ print(list)
 
 		fname = p[i];
 		len = strlen(fname);
-		posused = len + ((cursor == 0) ? 0 : COLUMNWIDTH - cursor%COLUMNWIDTH);
-		if ((cursor + posused) > linewidth) {
-			printf("\n");
-			cursor = 0;
-			posused = len;
+		posused = len;
+		if (cursor != 0) {
+			posused += COLUMNWIDTH - cursor%COLUMNWIDTH;
+			if (cursor + posused > linewidth) {
+				printf("\n");
+				cursor = 0;
+				posused = len;
+			}
 		}
 		if (manyflg && (cursor == 0)) fputs(INDENT, stdout); 
 		printf("%*s", posused, fname);
@@ -297,6 +302,7 @@ listdir(path)
 
 	int /*GOTO*/
 main(argc, argv)
+	int argc;
 	char **argv;
 {
 	register char *path, *p, *q;
@@ -333,7 +339,8 @@ main(argc, argv)
 				ncols=1;
 				break;
 
-			default:
+			default: /* select specific types */
+				all = 0;
 				switch(*p) {
 				case 'f':
 					flist.flag++;
@@ -370,12 +377,23 @@ main(argc, argv)
 					plist.flag++;
 					break;
 
+				case 'S':
+					soclist.flag++;
+					break;
+
+				case 'D':
+					doorlist.flag++;
+					break;
+
+				case 'U':
+					symlist.flag++;
+					break;
+
 				default:
 					fprintf(stderr, "Unknown flag: %c\n",
 						*p);
 					continue;
 				}
-				all = 0;
 			}
 	}
 
