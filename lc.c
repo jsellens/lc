@@ -46,12 +46,13 @@ static struct filelist {
 	mpblist = {(char **) NULL, 0, 0, 0, "MPX Block Files"},
 	symlist = {(char **) NULL, 0, 0, 0, "Unsatisfied Symbolic Links"},
 	soclist = {(char **) NULL, 0, 0, 0, "Sockets"},
+	doorlist = {(char **) NULL, 0, 0, 0, "Doors"},
 				/* flag is always on for this list */
 	goklist = {(char **) NULL, 0, 0, 1, "**GOK"};
 
 static struct filelist *printlist[] = {
 	&dlist, &flist, &plist, &blist, &clist, &mpclist, &mpblist, &symlist,
-	&soclist, &goklist, 0
+	&soclist, &doorlist, &goklist, 0
 };
 
 static struct filelist *listtype[IFMT+1];
@@ -84,6 +85,9 @@ static struct xinit {
 #endif
 #ifdef S_IFSOCK
 	S_IFSOCK,	&soclist,
+#endif
+#ifdef S_IFDOOR
+	S_IFDOOR,	&doorlist,
 #endif
 	-1,
 };
@@ -379,7 +383,7 @@ main(argc, argv)
 		flist.flag = dlist.flag = blist.flag = clist.flag
 		    = mpblist.flag = mpclist.flag
 		    = symlist.flag = soclist.flag
-		    = plist.flag = 1;
+		    = doorlist.flag = plist.flag = 1;
 
 	linewidth = ncols * COLUMNWIDTH;
 
