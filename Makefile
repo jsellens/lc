@@ -2,8 +2,8 @@ NAME = lc
 
 PREFIX	= /usr/local
 
-DIRNAME	= lc-1.0
-TARFILE	= /tmp/lc-1.0.tar.gz
+DIRNAME	= lc-1.1
+TARFILE	= /tmp/lc-1.1.tar.gz
 
 INSTALL	= cp
 
