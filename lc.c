@@ -7,6 +7,7 @@ static char *copyright =
  */
 
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <termios.h>
@@ -313,7 +314,6 @@ main(argc, argv)
 		listtype[i] = &goklist;
 	for (xp = xinit; xp->x_flag != -1; xp++)
 		listtype[MODEX(xp->x_flag)] = xp->x_list;
-#ifdef TIOCGWINSZ
 	if (isatty(1)) {
 		struct winsize win;
 		if (ioctl(1, TIOCGWINSZ, &win) != -1) {
@@ -321,7 +321,6 @@ main(argc, argv)
 			ncols = ncols ? ncols : 1;	/* can't have 0 columns */
 		}
 	}
-#endif /* TIOGCWINSZ */
 	if(argc >= 2 && argv[1][0] == '-') {
 		argv++;
 		argc--;
