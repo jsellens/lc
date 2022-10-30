@@ -15,6 +15,18 @@ Unlike ls, lc displays objects by type, showing "Directories:",
 "Files:", "Pipes:", "Unsatisfied Symbolic Links:", among other
 file system object types.
 
+## Alternative
+
+If C is inconvenient for you, you may enjoy RJ White's
+"lc - a ls alternative" reimplementation in Perl at
+https://github.com/rjwhite/lc
+
+## Distributions
+
+I don't think lc is available in any Linux distributions,
+but it is (currently) available as a FreeBSD pkg/port,
+in misc/lc.
+
 ## History
 
 At the time I added these files to this git repository in
